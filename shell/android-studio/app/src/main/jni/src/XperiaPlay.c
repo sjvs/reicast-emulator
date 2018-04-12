@@ -56,7 +56,7 @@ static jobject		g_pActivity		= 0;
 static jmethodID	javaOnNDKTouch	= 0;
 static jmethodID	javaOnNDKKey	= 0;
 
-static bool hasTouchpad;
+static bool isXperiaPlay;
 
 /**
  * Our saved state data.
@@ -153,14 +153,14 @@ engine_handle_input( struct android_app* app, AInputEvent* event )
                 touchstate[nPointerId].y = AMotionEvent_getY( event, n );
             }
 
-            if( jni && g_pActivity && hasTouchpad) {
+            if( jni && g_pActivity && isXperiaPlay) {
 //                (*jni)->CallVoidMethod( jni, g_pActivity, javaOnNDKTouch, device, nSourceId, nRawAction, touchstate[nPointerId].x, touchstate[nPointerId].y, newTouch);
                 (*jni)->CallVoidMethod( jni, g_pActivity, javaOnNDKTouch, device, nSourceId, nRawAction, touchstate[nPointerId].x, touchstate[nPointerId].y);
             }
             newTouch = JNI_FALSE;
         }
 
-        if( hasTouchpad ) {
+        if( isXperiaPlay ) {
             return 1;
         } else {
             return 0;
@@ -261,7 +261,7 @@ int
 RegisterNative( JNIEnv* env, jobject clazz, jboolean touchpad )
 {
 	g_pActivity = (jobject)(*env)->NewGlobalRef( env, clazz );
-    hasTouchpad = (bool) touchpad;
+    isXperiaPlay = (bool) touchpad;
 	return 0;
 }
 
@@ -293,6 +293,14 @@ jint EXPORT_XPLAY JNICALL JNI_OnLoad(JavaVM * vm, void * reserved)
 		LOGW( "%s - Failed to register native activity methods", __FUNCTION__ );
 		return -1;
 	}
+
+    char device_type[PROP_VALUE_MAX];
+    __system_property_get("ro.product.model", device_type);
+    if( isXperiaPlay ) {
+        LOGW( "%s touchpad enabled", device_type );
+    } else {
+        LOGW( "%s touchpad ignored", device_type );
+    }
 
 //    javaOnNDKTouch	= (*env)->GetMethodID( env, java_activity_class, "OnNativeMotion", "(IIIIIZ)Z");
     javaOnNDKTouch	= (*env)->GetMethodID( env, java_activity_class, "OnNativeMotion", "(IIIII)Z");

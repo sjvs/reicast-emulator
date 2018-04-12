@@ -430,7 +430,7 @@ public class InputFragment extends Fragment {
 				|| keyCode == KeyEvent.KEYCODE_VOLUME_UP
 				|| keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
 			return false;
-		if (keyCode == KeyEvent.KEYCODE_BACK)
+		if (!pad.IsXperiaPlay() && keyCode == KeyEvent.KEYCODE_BACK)
 			return false;
 
 		String descriptor = null;

@@ -60,6 +60,7 @@ public class GL2JNIActivity extends Activity {
 		app.getConfigurationPrefs(prefs);
 		menu = new OnScreenMenu(GL2JNIActivity.this, prefs);
 
+		pad.isXperiaPlay = pad.IsXperiaPlay();
 		pad.isOuyaOrTV = pad.IsOuyaOrTV(GL2JNIActivity.this);
 //		pad.isNvidiaShield = pad.IsNvidiaShield();
 
@@ -167,6 +168,9 @@ public class GL2JNIActivity extends Activity {
 						} else if (InputDevice.getDevice(joy).getName()
 								.contains(Gamepad.controllers_shield)) {
 							pad.map[playerNum] = pad.getConsoleController();
+						} else if (InputDevice.getDevice(joy).getName()
+								.contains(Gamepad.controllers_play)) {
+							pad.map[playerNum] = pad.getXPlayController();
 						} else if (!pad.isActiveMoga[playerNum]) { // Ouya controller
 							pad.map[playerNum] = pad.getOUYAController();
 						}
@@ -527,7 +531,11 @@ public class GL2JNIActivity extends Activity {
 			}
 		}
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			return showMenu();
+			if (pad.isXperiaPlay) {
+				return true;
+			} else {
+				return showMenu();
+			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
