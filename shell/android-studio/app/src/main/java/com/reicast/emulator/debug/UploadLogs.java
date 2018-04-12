@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.reicast.emulator.config.Config;
 
@@ -148,10 +149,17 @@ public class UploadLogs extends AsyncTask<String, Integer, Object> {
 	protected void onPostExecute(Object response) {
 		if (response != null && !response.equals(null)) {
 			String logLink = Config.report_url + currentTime + ".txt";
-			android.content.ClipboardManager clipboard = (android.content.ClipboardManager) mContext
-					.getSystemService(Context.CLIPBOARD_SERVICE);
-			android.content.ClipData clip = android.content.ClipData.newPlainText("logcat", logLink);
-			clipboard.setPrimaryClip(clip);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				android.content.ClipboardManager clipboard = (android.content.ClipboardManager) mContext
+						.getSystemService(Context.CLIPBOARD_SERVICE);
+				android.content.ClipData clip = android.content.ClipData
+						.newPlainText("logcat", logLink);
+				clipboard.setPrimaryClip(clip);
+			} else {
+				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) mContext
+						.getSystemService(Context.CLIPBOARD_SERVICE);
+				clipboard.setText(logLink);
+			}
 			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Config.git_issues));
 			mContext.startActivity(browserIntent);
 		}

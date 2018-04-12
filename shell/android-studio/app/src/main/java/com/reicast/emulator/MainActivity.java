@@ -138,7 +138,15 @@ public class MainActivity extends AppCompatActivity implements
 		// Check that the activity is using the layout version with
 		// the fragment_container FrameLayout
 		if (findViewById(R.id.fragment_container) != null) {
-            onMainBrowseSelected(true, null, false, null);
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+				if (savedInstanceState != null) {
+					return;
+				}
+			}
+			onMainBrowseSelected(true, null, false, null);
 		}
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
