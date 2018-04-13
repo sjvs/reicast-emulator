@@ -182,7 +182,7 @@ public class GL2JNIView extends GLSurfaceView
 		// This is the game we are going to run
 		fileName = newFileName;
 
-		if (Emulator.nativeact) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Emulator.nativeact) {
 			if (GL2JNINative.syms != null)
 				JNIdc.data(1, GL2JNINative.syms);
 		} else {
